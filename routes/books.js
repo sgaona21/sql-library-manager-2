@@ -3,7 +3,7 @@ const router = express.Router();
 const Book = require('../models').Book;
 
 
-// retrieves full list of books
+//READS full list of books
 router.get('/', async (req, res) => {
     try {
         const books = await Book.findAll();
@@ -18,11 +18,21 @@ router.get('/new', (req, res) => {
     res.render('new-book', { book: {} })
 })
 
-//creates new book
+//CREATES new book
 router.post('/new', async (req, res) => {
     try {
         const book = await Book.create(req.body);
         res.redirect('/books')
+    } catch(error) {
+        res.status(500).send(error)
+    }
+})
+
+//GET individual book 
+router.get('/:id', async (req, res) => {
+    try {
+        const book = await Book.findByPk(req.params.id);
+        res.render('update-book', { book });
     } catch(error) {
         res.status(500).send(error)
     }
