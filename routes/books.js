@@ -38,4 +38,26 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+//UPDATE existing book
+router.post('/:id', async (req, res) => {
+    try {
+        const book = await Book.findByPk(req.params.id);
+        await book.update(req.body);
+        res.redirect('/books')
+    } catch(error) {
+        res.status(500).send(error)
+    }
+})
+
+//DELETE existing book 
+router.post('/:id/delete', async (req, res) => {
+    try {
+        const book = await Book.findByPk(req.params.id);
+        await book.destroy();
+        res.redirect('/books')
+    } catch(error) {
+        res.status(500).send(error)
+    }
+})
+
 module.exports = router;
