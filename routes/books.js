@@ -53,7 +53,12 @@ router.post('/:id', async (req, res) => {
         await book.update(req.body);
         res.redirect('/books')
     } catch(error) {
-        res.status(500).send(error)
+        if (error.name === 'SequelizeValidationError') {
+            const book = Book.build(req.body);
+            book.id = req.params.id;
+            console.error(error)
+            res.render('update-book', { book, errors: error.errors}) 
+        }
     }
 })
 
