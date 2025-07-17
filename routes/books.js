@@ -39,9 +39,7 @@ router.get('/:id', async (req, res, next) => {
         if (book) {
             res.render('update-book', { book });
         } else {
-            const err = new Error("Book not found in database");
-            err.status = 404;
-            next(err);
+            res.status(404).render('book-not-found');
         }
     } catch(error) {
         next(error)
@@ -69,5 +67,9 @@ router.post('/:id/delete', async (req, res) => {
         res.status(500).send(error)
     }
 })
+
+
+
+
 
 module.exports = router;
