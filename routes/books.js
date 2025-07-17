@@ -3,7 +3,7 @@ const router = express.Router();
 const Book = require('../models').Book;
 
 
-//READS full list of books
+//GET all books
 router.get('/', async (req, res) => {
     try {
         const books = await Book.findAll();
@@ -24,17 +24,27 @@ router.post('/new', async (req, res) => {
         const book = await Book.create(req.body);
         res.redirect('/books')
     } catch(error) {
-        res.status(500).send(error)
+        if (error.name === 'SequelizeValidationError') {
+            const book = Book.build(req.body);
+            console.error(error)
+            res.render('new-book', { book, errors: error.errors}) 
+        }
     }
 })
 
 //GET individual book 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const book = await Book.findByPk(req.params.id);
-        res.render('update-book', { book });
+        if (book) {
+            res.render('update-book', { book });
+        } else {
+            const err = new Error("Book not found in database");
+            err.status = 404;
+            next(err);
+        }
     } catch(error) {
-        res.status(500).send(error)
+        next(error)
     }
 })
 
